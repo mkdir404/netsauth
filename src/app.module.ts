@@ -7,9 +7,13 @@ import { Mensaje } from './mensajes/entities/mensaje.entity'
 import { MensajesService } from './mensajes/mensajes.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { AppGateway } from './app.gateway';
+import { MongooseModule } from '@nestjs/mongoose';
+import { BlogModule } from './blog/blog.module';
 
 @Module({
   imports: [
+    MongooseModule.forRoot('mongodb://localhost/nest-blog-project', { useNewUrlParser: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: '95.216.37.253',
@@ -23,9 +27,10 @@ import { UsersModule } from './users/users.module';
     }),
     TypeOrmModule.forFeature([Mensaje]),
     AuthModule,
-    UsersModule
+    UsersModule,
+    BlogModule
   ],
   controllers: [AppController, MensajesController],
-  providers: [AppService, MensajesService],
+  providers: [AppService, MensajesService, AppGateway],
 })
 export class AppModule {}
