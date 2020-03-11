@@ -4,12 +4,14 @@ import { AppService } from './app.service';
 import { MensajesController } from './mensajes/mensajes.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Mensaje } from './mensajes/entities/mensaje.entity'
+import { User } from './auth2/user/user.entity';
 import { MensajesService } from './mensajes/mensajes.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { AppGateway } from './app.gateway';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BlogModule } from './blog/blog.module';
+import { Auth2Module } from './auth2/auth2.module';
 
 @Module({
   imports: [
@@ -21,14 +23,15 @@ import { BlogModule } from './blog/blog.module';
       username: 'vicidial',
       password: 'vicidial',
       database: 'nest_test',
-      entities: [Mensaje],
+      entities: [Mensaje,User],
       //entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
     TypeOrmModule.forFeature([Mensaje]),
     AuthModule,
     UsersModule,
-    BlogModule
+    BlogModule,
+    Auth2Module
   ],
   controllers: [AppController, MensajesController],
   providers: [AppService, MensajesService, AppGateway],
