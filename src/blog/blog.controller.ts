@@ -30,7 +30,7 @@ export class BlogController {
   }
 
   // Fetch all posts
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('posts')
   async getPosts(@Res() res) {
     const posts = await this.blogService.getPosts();

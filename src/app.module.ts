@@ -12,6 +12,10 @@ import { AppGateway } from './app.gateway';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BlogModule } from './blog/blog.module';
 import { Auth2Module } from './auth2/auth2.module';
+import { GuestsModule } from './guests/guests.module';
+import { ConfigModule, ConfigService } from 'nestjs-config';
+import * as path from 'path';
+import { GuestEntity } from './guests/guest.entity';
 
 @Module({
   imports: [
@@ -23,15 +27,22 @@ import { Auth2Module } from './auth2/auth2.module';
       username: 'vicidial',
       password: 'vicidial',
       database: 'nest_test',
-      entities: [Mensaje,User],
-      //entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [Mensaje,User,GuestEntity],
       synchronize: true,
-    }),
+    }) 
+    
+   // ConfigModule.load(path.resolve('config', '**/!(*.d).{ts,js}')),
+   // TypeOrmModule.forRootAsync({
+    //  useFactory: (config: ConfigService) => config.get('databaseSql'),
+    //  inject: [ConfigService],
+    //}) 
+    ,
     TypeOrmModule.forFeature([Mensaje]),
     AuthModule,
     UsersModule,
     BlogModule,
-    Auth2Module
+    Auth2Module,
+    GuestsModule
   ],
   controllers: [AppController, MensajesController],
   providers: [AppService, MensajesService, AppGateway],
