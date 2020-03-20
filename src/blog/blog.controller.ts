@@ -1,11 +1,16 @@
-import { Controller, Get, Res, HttpStatus, Param, NotFoundException, Post, Body, Put, Query, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Res, HttpStatus, Param, NotFoundException, Post, Body, Put, Query, Delete, UseGuards, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreatePostDTO } from './dto/create-post.dto';
 import { ValidateObjectId } from './shared/pipes/validate-object-id.pipes';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from  'multer';
+import { extname } from  'path';
 
 @Controller('blog')
 export class BlogController {
+
+  SERVER_URL:  string  =  "http://localhost:3000/";
 
   constructor(private blogService: BlogService) { }
 
@@ -62,5 +67,29 @@ export class BlogController {
       message: 'Post has been deleted!',
       post: deletedPost,
     });
+  }
+
+  @Post('post-img-upload')
+  @UseInterceptors(FileInterceptor('file',
+    {
+      storage: diskStorage({
+        destination: './imgsposts', 
+        filename: (req, file, cb) => {
+        const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
+        return cb(null, `${randomName}${extname(file.originalname)}`)
+      }
+      })
+    }
+  )
+  )
+  uploadAvatar(@Body() params:any, @UploadedFile() file) {
+    console.log('Arre se armo el update')
+    console.log(params)
+    console.log(Number(params.userId), `${this.SERVER_URL}${file.path}`);
+  }
+  
+  @Get('post-img-upload/:fileId')
+  async serveAvatar(@Param('fileId') fileId, @Res() res): Promise<any> {
+    res.sendFile(fileId, { root: './imgsposts'});
   }
 }
